@@ -1,0 +1,3 @@
+C:/Users/manta/Desktop/luau-modx/build/CMakeFiles/luau_modx.dir
+C:/Users/manta/Desktop/luau-modx/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/manta/Desktop/luau-modx/build/CMakeFiles/ZERO_CHECK.dir
