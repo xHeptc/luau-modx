@@ -12,15 +12,26 @@ elseif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
 endif()
 
+set(LUAU_BUILD_CLI OFF CACHE BOOL "" FORCE)
+set(LUAU_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(extern/luau EXCLUDE_FROM_ALL)
+
 add_library(luau_modx SHARED src/main.cpp)
 set_target_properties(luau_modx PROPERTIES PREFIX "")
 
 target_include_directories(luau_modx PRIVATE
-    sdk/metamod/metamod
-    sdk/hlsdk/dlls
-    sdk/hlsdk/public
-    sdk/hlsdk/common
-    sdk/hlsdk/engine
+    extern/metamod/metamod
+    extern/hlsdk/dlls
+    extern/hlsdk/public
+    extern/hlsdk/common
+    extern/hlsdk/engine
+)
+
+target_link_libraries(luau_modx PRIVATE
+    Luau.VM
+    Luau.Compiler
+    Luau.Ast
 )
 
 add_custom_command(TARGET luau_modx POST_BUILD
@@ -29,9 +40,7 @@ add_custom_command(TARGET luau_modx POST_BUILD
     COMMENT "Copying compiled plugin to dist/ directory..."
 )
 
-##
-## RE-BUILD EVERYTIME YOU CHANGE ANYTHING IN HERE
-##
+## IMPORTANT: RE-BUILD EVERYTIME YOU CHANGE ANYTHING IN HERE
 
 ## TO BUILD   
 ## cmake -S . -B build -A Win32
@@ -41,4 +50,4 @@ add_custom_command(TARGET luau_modx POST_BUILD
 
 ## IF GETTING CMakeCache.txt is different than the directory ...
 ## rmdir build
-## Then A (Yes To All) 
+## Then A (Yes To All)

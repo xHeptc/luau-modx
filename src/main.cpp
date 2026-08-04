@@ -1,11 +1,11 @@
 #include <extdll.h>
 #include <meta_api.h>
-#include <cstring>
+#include <string>
 
 plugin_info_t Plugin_info = {
     META_INTERFACE_VERSION, 
     "luau-modx",
-    "1.0.0.0",
+    "0.5.0.0",
     __DATE__,
     "xHeptc",
     "http://",
@@ -36,22 +36,20 @@ C_DLLEXPORT	int	Meta_Query(const char *ifvers, plugin_info_t **pPlugInfo, mutil_
 	sscanf(ifvers, "%d:%d",	&mmajor, &mminor);
 	sscanf(Plugin_info.ifvers, "%d:%d",	&pmajor, &pminor);
 
-	if (strcmp(ifvers, Plugin_info.ifvers))
-	{
+	if (strcmp(ifvers, Plugin_info.ifvers)){
 		LOG_MESSAGE(PLID, "warning: ifvers mismatch (pl \"%s\") (mm \"%s\")", Plugin_info.ifvers, ifvers);
-		if (pmajor > mmajor)
-		{
+        
+		if (pmajor > mmajor){
 			LOG_ERROR(PLID, "metamod version is too old for this plugin; update metamod");
-			return (FALSE);
-		} else if (pmajor < mmajor) {
+			return FALSE;
+		} else if (pmajor < mmajor){
 			LOG_ERROR(PLID, "metamod version is incompatible with this plugin; please find a newer version of this plugin");
-			return (FALSE);
-		} else if (pmajor == mmajor) {
-			if (pminor > mminor)
-			{
+			return FALSE;
+		} else if (pmajor == mmajor){
+			if (pminor > mminor){
 				LOG_ERROR(PLID, "metamod version is incompatible with this plugin; please find a newer version of this plugin");
 				return FALSE;
-			} else if (pminor < mminor) {
+			} else if (pminor < mminor){
 				LOG_MESSAGE(PLID, "warning: there may be a newer version of metamod available");
 			}
 		}
@@ -74,6 +72,22 @@ C_DLLEXPORT	int	Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, m
     memcpy(pFunctionTable, &gMetaFunctionTable, sizeof(META_FUNCTIONS));
     gpGamedllFuncs = pGamedllFuncs;
 
+    char szBuffer[256];
+    snprintf(szBuffer, sizeof(szBuffer),
+        "\n\n"
+        "==================================================\n"
+        "\n"
+        "  [luau-modx] attached!\n"
+        "              version: %s\n"
+        "              made by: xHeptc\n"
+        "              github:  github.com/xHeptc/luau-modx\n"
+        "\n"
+        "==================================================\n"
+        "\n\n",
+        Plugin_info.version
+    );
+
+    SERVER_PRINT(szBuffer);
     return TRUE;
 }
 
@@ -82,7 +96,7 @@ C_DLLEXPORT	int	Meta_Detach(PLUG_LOADTIME now, PL_UNLOAD_REASON	reason){
         LOG_ERROR(PLID, "Can't unload plugin right now");
         return FALSE;
     }
-    
+
     return TRUE;
 }
 
